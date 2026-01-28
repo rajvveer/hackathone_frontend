@@ -377,7 +377,14 @@ const Chat = () => {
                                 {msg.actions && msg.actions.length > 0 && (
                                     <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
                                         {msg.actions.map((action, i) => (
-                                            <ActionCard key={i} action={action} />
+                                            <ActionCard
+                                                key={i}
+                                                action={action}
+                                                onSendMessage={(text) => {
+                                                    setInput(text);
+                                                    setTimeout(() => document.getElementById('send-btn')?.click(), 0);
+                                                }}
+                                            />
                                         ))}
                                     </div>
                                 )}
@@ -432,6 +439,7 @@ const Chat = () => {
                             disabled={loading}
                         />
                         <button
+                            id="send-btn"
                             onClick={handleSend}
                             disabled={!input.trim() || loading}
                             className="btn btn-primary h-12 w-12 p-0 rounded-full shrink-0"
@@ -472,7 +480,7 @@ const ActionBadge = ({ action }) => {
 };
 
 // Action Card Component (shows in message)
-const ActionCard = ({ action }) => {
+const ActionCard = ({ action, onSendMessage }) => {
     const icons = {
         shortlist_added: '⭐',
         task_added: '✅',
@@ -489,27 +497,72 @@ const ActionCard = ({ action }) => {
         university_locked: 'from-emerald-500/20 to-emerald-500/5 border-emerald-500/30',
     };
 
+    const [selectedUni, setSelectedUni] = useState(null);
+
+    const handleShortlist = () => {
+        if (selectedUni && onSendMessage) {
+            onSendMessage(`Shortlist ${selectedUni}`);
+        }
+    };
+
     return (
-        <div className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${colors[action.action] || 'from-white/10 to-white/5 border-white/20'} border`}>
-            <span className="text-lg">{icons[action.action] || '✨'}</span>
-            <div className="flex-1 text-sm">
-                {action.action === 'shortlist_added' && (
-                    <p>Added <strong>{action.university}</strong> to your <span className="capitalize">{action.category}</span> list</p>
-                )}
-                {action.action === 'task_added' && (
-                    <p>Created task: <strong>{action.task}</strong></p>
-                )}
-                {action.action === 'recommendations_generated' && (
-                    <p>Generated fresh university recommendations</p>
-                )}
-                {action.action === 'profile_updated' && (
-                    <p>Updated <strong>{action.field?.replace(/_/g, ' ')}</strong> to <strong>{action.value}</strong></p>
-                )}
-                {action.action === 'university_locked' && (
-                    <p>Locked <strong>{action.university}</strong> as your primary choice</p>
-                )}
+        <div className={`flex flex-col gap-3 p-3 rounded-lg bg-gradient-to-r ${colors[action.action] || 'from-white/10 to-white/5 border-white/20'} border`}>
+            <div className="flex items-center gap-2">
+                <span className="text-lg">{icons[action.action] || '✨'}</span>
+                <div className="flex-1 text-sm">
+                    {action.action === 'shortlist_added' && (
+                        <p>Added <strong>{action.university}</strong> to your <span className="capitalize">{action.category}</span> list</p>
+                    )}
+                    {action.action === 'task_added' && (
+                        <p>Created task: <strong>{action.task}</strong></p>
+                    )}
+                    {action.action === 'recommendations_generated' && (
+                        <div>
+                            <p className="font-semibold mb-2">Generated University Recommendations:</p>
+                            {/* Interactive List for Recommendations */}
+                            {action.recommendations && action.recommendations.length > 0 ? (
+                                <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                                    {action.recommendations.map((uni, idx) => (
+                                        <label key={idx} className={`flex items-start gap-2 p-2 rounded cursor-pointer transition ${selectedUni === uni.university_name ? 'bg-white/10' : 'hover:bg-white/5'}`}>
+                                            <input
+                                                type="radio"
+                                                name={`recommendation-${action.timeStamp || idx}`} // unique group per card isn't strictly needed if we just use local state correctly, but good for form semantics
+                                                value={uni.university_name}
+                                                checked={selectedUni === uni.university_name}
+                                                onChange={() => setSelectedUni(uni.university_name)}
+                                                className="mt-1"
+                                            />
+                                            <div className="text-xs">
+                                                <div className="font-medium text-white">{uni.university_name}</div>
+                                                <div className="text-gray-400">{uni.location}</div>
+                                            </div>
+                                        </label>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-gray-400 text-xs">Check detailed response above.</p>
+                            )}
+                        </div>
+                    )}
+                    {action.action === 'profile_updated' && (
+                        <p>Updated <strong>{action.field?.replace(/_/g, ' ')}</strong> to <strong>{action.value}</strong></p>
+                    )}
+                    {action.action === 'university_locked' && (
+                        <p>Locked <strong>{action.university}</strong> as your primary choice</p>
+                    )}
+                </div>
+                {action.success && action.action !== 'recommendations_generated' && <span className="text-emerald-400">✓</span>}
             </div>
-            {action.success && <span className="text-emerald-400">✓</span>}
+
+            {/* Shortlist Action Button */}
+            {action.action === 'recommendations_generated' && selectedUni && (
+                <button
+                    onClick={handleShortlist}
+                    className="self-end px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs rounded border border-amber-500/50 transition flex items-center gap-1"
+                >
+                    <span>⭐</span> Shortlist {selectedUni}
+                </button>
+            )}
         </div>
     );
 };
