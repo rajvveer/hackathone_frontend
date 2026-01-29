@@ -40,7 +40,7 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-dark-900 via-dark-900 to-dark-800">
+        <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'var(--bg-primary)' }}>
             {/* Background glow effects */}
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
@@ -50,8 +50,8 @@ const Register = () => {
                     {/* Header */}
                     <div className="text-center mb-8">
                         <div className="text-5xl mb-4">🎓</div>
-                        <h1 className="text-2xl font-bold font-display mb-2">Create Account</h1>
-                        <p className="text-gray-400">Start your study abroad journey with AI</p>
+                        <h1 className="text-2xl font-bold font-display mb-2 text-themed">Create Account</h1>
+                        <p className="text-themed-secondary">Start your study abroad journey with AI</p>
                     </div>
 
                     <form onSubmit={handleSubmit}>
@@ -127,7 +127,7 @@ const Register = () => {
                         </button>
                     </form>
 
-                    <p className="text-center text-gray-400 mt-6">
+                    <p className="text-center text-themed-secondary mt-6">
                         Already have an account?{' '}
                         <Link to="/login" className="text-primary-light hover:text-primary transition">
                             Sign in

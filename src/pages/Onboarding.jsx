@@ -165,13 +165,13 @@ const Onboarding = () => {
                 <div className="absolute -top-4 -right-4 text-4xl animate-pulse">✨</div>
             </div>
             <div>
-                <h1 className="text-4xl font-bold font-display mb-4 bg-gradient-to-r from-white via-primary-light to-secondary bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold font-display mb-4 text-gradient">
                     Welcome, {user?.name?.split(' ')[0]}!
                 </h1>
-                <p className="text-xl text-gray-300 mb-2">
+                <p className="text-xl text-themed-secondary mb-2">
                     Let's build your study abroad profile
                 </p>
-                <p className="text-gray-500">
+                <p className="text-themed-muted">
                     This takes about 2 minutes and unlocks personalized guidance
                 </p>
             </div>
@@ -181,9 +181,9 @@ const Onboarding = () => {
                     { icon: '🤖', label: 'AI Guidance' },
                     { icon: '📋', label: 'Action Plan' },
                 ].map((item, idx) => (
-                    <div key={idx} className="p-4 rounded-xl bg-white/5 border border-white/10">
+                    <div key={idx} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
                         <div className="text-2xl mb-2">{item.icon}</div>
-                        <div className="text-xs text-gray-400">{item.label}</div>
+                        <div className="text-xs text-themed-muted">{item.label}</div>
                     </div>
                 ))}
             </div>
@@ -194,13 +194,13 @@ const Onboarding = () => {
     const EducationStep = () => (
         <div className="space-y-8">
             <div className="text-center">
-                <h2 className="text-3xl font-bold mb-2">Tell us about yourself</h2>
-                <p className="text-gray-400">Your educational background helps us find the right programs</p>
+                <h2 className="text-3xl font-bold mb-2 text-themed">Tell us about yourself</h2>
+                <p className="text-themed-muted">Your educational background helps us find the right programs</p>
             </div>
 
             {/* Current Education */}
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">
+                <label className="block text-sm font-medium text-themed-secondary mb-3">
                     Where are you in your academic journey?
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -210,12 +210,12 @@ const Onboarding = () => {
                             onClick={() => updateField('current_education_level', option.value)}
                             className={`group p-4 rounded-2xl border-2 text-left transition-all duration-300 hover:scale-[1.02] ${formData.current_education_level === option.value
                                 ? 'border-primary bg-primary/20 shadow-lg shadow-primary/20'
-                                : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                                : 'border-themed bg-themed-card hover:border-primary/30'
                                 }`}
                         >
                             <div className="text-2xl mb-2">{option.icon}</div>
-                            <div className="font-medium text-white">{option.value}</div>
-                            <div className="text-xs text-gray-400 mt-1">{option.desc}</div>
+                            <div className="font-medium text-themed">{option.value}</div>
+                            <div className="text-xs text-themed-muted mt-1">{option.desc}</div>
                         </button>
                     ))}
                 </div>
@@ -224,7 +224,7 @@ const Onboarding = () => {
             {/* Target Degree */}
             {formData.current_education_level && (
                 <div className="animate-slide-up">
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                    <label className="block text-sm font-medium text-themed-secondary mb-3">
                         What degree do you want to pursue?
                     </label>
                     <div className="grid grid-cols-2 gap-3">
@@ -234,12 +234,12 @@ const Onboarding = () => {
                                 onClick={() => updateField('intended_degree', option.value)}
                                 className={`group p-4 rounded-2xl border-2 text-left transition-all duration-300 hover:scale-[1.02] ${formData.intended_degree === option.value
                                     ? 'border-secondary bg-secondary/20 shadow-lg shadow-secondary/20'
-                                    : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                                    : 'border-themed bg-themed-card hover:border-secondary/30'
                                     }`}
                             >
                                 <div className="text-2xl mb-2">{option.icon}</div>
-                                <div className="font-medium text-white">{option.label}</div>
-                                <div className="text-xs text-gray-400 mt-1">{option.desc}</div>
+                                <div className="font-medium text-themed">{option.label}</div>
+                                <div className="text-xs text-themed-muted mt-1">{option.desc}</div>
                             </button>
                         ))}
                     </div>
@@ -249,7 +249,7 @@ const Onboarding = () => {
             {/* GPA */}
             {formData.intended_degree && (
                 <div className="animate-slide-up">
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                    <label className="block text-sm font-medium text-themed-secondary mb-3">
                         Your Current GPA (Optional)
                     </label>
                     <div className="flex gap-3">
@@ -277,7 +277,7 @@ const Onboarding = () => {
                             </select>
                         </div>
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">This helps us find universities matching your academic profile</p>
+                    <p className="text-xs text-themed-muted mt-2">This helps us find universities matching your academic profile</p>
                 </div>
             )}
         </div>
@@ -287,8 +287,8 @@ const Onboarding = () => {
     const GoalsStep = () => (
         <div className="space-y-8">
             <div className="text-center">
-                <h2 className="text-3xl font-bold mb-2">What do you want to study?</h2>
-                <p className="text-gray-400">Select your primary field of interest</p>
+                <h2 className="text-3xl font-bold mb-2 text-themed">What do you want to study?</h2>
+                <p className="text-themed-muted">Select your primary field of interest</p>
             </div>
 
             <div className="grid grid-cols-3 gap-3">
@@ -309,7 +309,7 @@ const Onboarding = () => {
 
             {formData.field_of_study && (
                 <div className="animate-slide-up">
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                    <label className="block text-sm font-medium text-themed-secondary mb-3">
                         When do you want to start? (Optional)
                     </label>
                     <div className="flex gap-4">
@@ -321,7 +321,7 @@ const Onboarding = () => {
                                         onClick={() => updateField('target_intake_season', season)}
                                         className={`flex-1 p-3 rounded-xl border transition-all ${formData.target_intake_season === season
                                             ? 'border-primary bg-primary/20'
-                                            : 'border-white/10 hover:border-white/20'
+                                            : 'border-themed hover:border-primary/30'
                                             }`}
                                     >
                                         {season}
@@ -339,7 +339,7 @@ const Onboarding = () => {
                                             onClick={() => updateField('target_intake_year', year)}
                                             className={`flex-1 p-3 rounded-xl border transition-all ${formData.target_intake_year === year
                                                 ? 'border-primary bg-primary/20'
-                                                : 'border-white/10 hover:border-white/20'
+                                                : 'border-themed hover:border-primary/30'
                                                 }`}
                                         >
                                             {year}
@@ -358,14 +358,14 @@ const Onboarding = () => {
     const PreferencesStep = () => (
         <div className="space-y-8">
             <div className="text-center">
-                <h2 className="text-3xl font-bold mb-2">Where & How Much?</h2>
-                <p className="text-gray-400">Select destinations and budget for your studies</p>
+                <h2 className="text-3xl font-bold mb-2 text-themed">Where & How Much?</h2>
+                <p className="text-themed-muted">Select destinations and budget for your studies</p>
             </div>
 
             {/* Countries */}
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">
-                    Preferred Countries <span className="text-gray-500">(select multiple)</span>
+                <label className="block text-sm font-medium text-themed-secondary mb-3">
+                    Preferred Countries <span className="text-themed-muted">(select multiple)</span>
                 </label>
                 <div className="grid grid-cols-5 gap-2">
                     {COUNTRY_OPTIONS.map(country => (
@@ -374,7 +374,7 @@ const Onboarding = () => {
                             onClick={() => toggleCountry(country.code)}
                             className={`group relative p-3 rounded-2xl border-2 text-center transition-all duration-300 hover:scale-105 ${formData.preferred_countries.includes(country.code)
                                 ? 'border-amber-500 bg-amber-500/20 shadow-lg shadow-amber-500/20'
-                                : 'border-white/10 bg-white/5 hover:border-white/20'
+                                : 'border-themed bg-themed-card hover:border-amber-500/30'
                                 }`}
                         >
                             <div className="text-3xl mb-1">{country.flag}</div>
@@ -398,7 +398,7 @@ const Onboarding = () => {
             {/* Budget */}
             {formData.preferred_countries.length > 0 && (
                 <div className="animate-slide-up">
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                    <label className="block text-sm font-medium text-themed-secondary mb-3">
                         Annual Budget (Tuition + Living)
                     </label>
                     <div className="grid grid-cols-2 gap-3">
@@ -408,12 +408,12 @@ const Onboarding = () => {
                                 onClick={() => selectBudget(budget)}
                                 className={`group p-4 rounded-2xl border-2 text-center transition-all duration-300 hover:scale-[1.02] ${formData.budget_range_min === budget.min
                                     ? 'border-emerald-500 bg-emerald-500/20 shadow-lg shadow-emerald-500/20'
-                                    : 'border-white/10 bg-white/5 hover:border-white/20'
+                                    : 'border-themed bg-themed-card hover:border-emerald-500/30'
                                     }`}
                             >
                                 <div className="text-2xl mb-1">{budget.icon}</div>
-                                <div className="font-bold text-white">{budget.label}</div>
-                                <div className="text-xs text-gray-400">{budget.desc}</div>
+                                <div className="font-bold text-themed">{budget.label}</div>
+                                <div className="text-xs text-themed-muted">{budget.desc}</div>
                             </button>
                         ))}
                     </div>
@@ -423,7 +423,7 @@ const Onboarding = () => {
             {/* Funding Plan */}
             {formData.budget_range_min && (
                 <div className="animate-slide-up">
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                    <label className="block text-sm font-medium text-themed-secondary mb-3">
                         How will you fund your studies?
                     </label>
                     <div className="grid grid-cols-3 gap-3">
@@ -437,12 +437,12 @@ const Onboarding = () => {
                                 onClick={() => updateField('funding_plan', option.value)}
                                 className={`p-4 rounded-2xl border-2 text-center transition-all ${formData.funding_plan === option.value
                                     ? 'border-blue-500 bg-blue-500/20'
-                                    : 'border-white/10 hover:border-white/20'
+                                    : 'border-themed hover:border-blue-500/30'
                                     }`}
                             >
                                 <div className="text-2xl mb-1">{option.icon}</div>
-                                <div className="font-medium text-white">{option.value}</div>
-                                <div className="text-xs text-gray-400">{option.desc}</div>
+                                <div className="font-medium text-themed">{option.value}</div>
+                                <div className="text-xs text-themed-muted">{option.desc}</div>
                             </button>
                         ))}
                     </div>
@@ -455,13 +455,13 @@ const Onboarding = () => {
     const ReadinessStep = () => (
         <div className="space-y-8">
             <div className="text-center">
-                <h2 className="text-3xl font-bold mb-2">How prepared are you?</h2>
-                <p className="text-gray-400">This helps us create your personalized action plan</p>
+                <h2 className="text-3xl font-bold mb-2 text-themed">How prepared are you?</h2>
+                <p className="text-themed-muted">This helps us create your personalized action plan</p>
             </div>
 
             <div className="space-y-6">
                 {/* IELTS/TOEFL */}
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
                     <div className="flex items-center justify-between mb-3">
                         <span className="font-medium">English Proficiency (IELTS/TOEFL)</span>
                         <span className="text-2xl">🗣️</span>
@@ -478,7 +478,7 @@ const Onboarding = () => {
                                 onClick={() => updateField('ielts_status', status.value)}
                                 className={`p-3 rounded-xl border text-center transition-all ${formData.ielts_status === status.value
                                     ? 'border-primary bg-primary/20'
-                                    : 'border-white/10 hover:border-white/20'
+                                    : 'border-themed hover:border-primary/30'
                                     }`}
                             >
                                 <div className="text-xl">{status.icon}</div>
@@ -503,7 +503,7 @@ const Onboarding = () => {
                 </div>
 
                 {/* GRE */}
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
                     <div className="flex items-center justify-between mb-3">
                         <span className="font-medium">GRE/GMAT Status</span>
                         <span className="text-2xl">📊</span>
@@ -520,7 +520,7 @@ const Onboarding = () => {
                                 onClick={() => updateField('gre_status', status.value)}
                                 className={`p-3 rounded-xl border text-center transition-all ${formData.gre_status === status.value
                                     ? 'border-primary bg-primary/20'
-                                    : 'border-white/10 hover:border-white/20'
+                                    : 'border-themed hover:border-primary/30'
                                     }`}
                             >
                                 <div className="text-xl">{status.icon}</div>
@@ -531,7 +531,7 @@ const Onboarding = () => {
                 </div>
 
                 {/* SOP */}
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
                     <div className="flex items-center justify-between mb-3">
                         <span className="font-medium">Statement of Purpose</span>
                         <span className="text-2xl">✍️</span>
@@ -547,7 +547,7 @@ const Onboarding = () => {
                                 onClick={() => updateField('sop_status', status.value)}
                                 className={`p-3 rounded-xl border text-center transition-all ${formData.sop_status === status.value
                                     ? 'border-primary bg-primary/20'
-                                    : 'border-white/10 hover:border-white/20'
+                                    : 'border-themed hover:border-primary/30'
                                     }`}
                             >
                                 <div className="text-xl">{status.icon}</div>
@@ -582,21 +582,21 @@ const Onboarding = () => {
                     <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary via-secondary to-emerald-400 bg-clip-text text-transparent">
                         You're All Set!
                     </h2>
-                    <p className="text-gray-400">
+                    <p className="text-themed-muted">
                         Your AI Counsellor is ready to guide you
                     </p>
                 </div>
 
-                <div className="bg-white/5 rounded-2xl p-6 border border-white/10 text-left max-w-md mx-auto">
+                <div className="rounded-2xl p-6 text-left max-w-md mx-auto" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
                     <h3 className="font-semibold mb-4 text-center">Your Profile Summary</h3>
                     <div className="space-y-3">
                         {summary.map((item, idx) => (
-                            <div key={idx} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                                <span className="flex items-center gap-2 text-gray-400">
+                            <div key={idx} className="flex items-center justify-between py-2 border-b last:border-0" style={{ borderColor: 'var(--border-color)' }}>
+                                <span className="flex items-center gap-2 text-themed-muted">
                                     <span>{item.icon}</span>
                                     {item.label}
                                 </span>
-                                <span className="font-medium text-white">{item.value}</span>
+                                <span className="font-medium text-themed">{item.value}</span>
                             </div>
                         ))}
                     </div>

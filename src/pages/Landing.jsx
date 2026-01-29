@@ -5,9 +5,9 @@ const Landing = () => {
     const { isAuthenticated } = useAuth();
 
     return (
-        <div className="min-h-screen bg-dark-900 text-gray-100">
+        <div className="min-h-screen bg-themed text-themed">
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-dark-900 border-b border-white/10">
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-themed border-b border-themed">
                 <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-2 font-display font-bold text-xl">
                         <span className="text-2xl">🎓</span>
@@ -45,7 +45,7 @@ const Landing = () => {
             <section className="pt-32 pb-20 px-6">
                 <div className="max-w-4xl mx-auto text-center">
                     {/* Simple status pill */}
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-dark-800 border border-white/10 rounded-full text-sm text-gray-400 mb-8 animate-fade-in">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-themed-card border border-themed rounded-full text-sm text-themed-muted mb-8 animate-fade-in">
                         <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                         Powered by AI
                     </div>
@@ -57,7 +57,7 @@ const Landing = () => {
                         </span>
                     </h1>
 
-                    <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 animate-slide-up">
+                    <p className="text-lg md:text-xl text-themed-secondary max-w-2xl mx-auto mb-10 animate-slide-up">
                         Get AI-powered university recommendations, personalized guidance, and
                         step-by-step support for your international education journey.
                     </p>
@@ -83,7 +83,7 @@ const Landing = () => {
                             <div className="text-3xl md:text-4xl font-bold text-primary-light">
                                 500+
                             </div>
-                            <div className="text-gray-500 text-sm">Universities</div>
+                            <div className="text-themed-muted text-sm">Universities</div>
                         </div>
                         <div className="space-y-1">
                             <div className="text-3xl md:text-4xl font-bold text-primary-light">
@@ -102,13 +102,13 @@ const Landing = () => {
             </section>
 
             {/* Features Section */}
-            <section className="py-20 px-6 bg-dark-800">
+            <section className="py-20 px-6 bg-themed-card">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
                             Everything You Need
                         </h2>
-                        <p className="text-gray-400 max-w-2xl mx-auto">
+                        <p className="text-themed-secondary max-w-2xl mx-auto">
                             From profile building to application submission, we guide you
                             through every step.
                         </p>
@@ -149,13 +149,13 @@ const Landing = () => {
                         ].map((feature, idx) => (
                             <div
                                 key={idx}
-                                className="card border border-white/10 bg-dark-900/60 hover:border-primary/60 transition-transform transition-shadow duration-150 hover:-translate-y-1 hover:shadow-lg animate-fade-in"
+                                className="card hover:border-primary/60 transition-transform transition-shadow duration-150 hover:-translate-y-1 hover:shadow-lg animate-fade-in"
                             >
                                 <div className="text-4xl mb-4">{feature.icon}</div>
                                 <h3 className="text-lg font-semibold mb-2">
                                     {feature.title}
                                 </h3>
-                                <p className="text-gray-400 text-sm">{feature.desc}</p>
+                                <p className="text-themed-secondary text-sm">{feature.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -169,7 +169,7 @@ const Landing = () => {
                         <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
                             How It Works
                         </h2>
-                        <p className="text-gray-400">
+                        <p className="text-themed-secondary">
                             Four simple steps to your dream university
                         </p>
                     </div>
@@ -208,7 +208,7 @@ const Landing = () => {
                                     <h3 className="text-xl font-semibold mb-1">
                                         {item.title}
                                     </h3>
-                                    <p className="text-gray-400">{item.desc}</p>
+                                    <p className="text-themed-secondary">{item.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -219,11 +219,11 @@ const Landing = () => {
             {/* CTA Section */}
             <section className="py-20 px-6">
                 <div className="max-w-4xl mx-auto">
-                    <div className="card border border-primary/40 bg-dark-800 text-center py-12 animate-fade-in">
+                    <div className="card border border-primary/40 text-center py-12 animate-fade-in">
                         <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
                             Ready to Start Your Journey?
                         </h2>
-                        <p className="text-gray-400 mb-8 max-w-xl mx-auto">
+                        <p className="text-themed-secondary mb-8 max-w-xl mx-auto">
                             Join thousands of students who are using AI to navigate their
                             study abroad journey.
                         </p>
@@ -238,20 +238,20 @@ const Landing = () => {
             </section>
 
             {/* Footer */}
-            <footer className="py-8 px-6 border-t border-white/10">
+            <footer className="py-8 px-6 border-t border-themed">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-2 text-gray-500">
+                    <div className="flex items-center gap-2 text-themed-muted">
                         <span className="text-xl">🎓</span>
                         <span>AI Counsellor © 2025</span>
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-gray-500">
-                        <a href="#" className="hover:text-gray-300 transition-colors">
+                    <div className="flex items-center gap-6 text-sm text-themed-muted">
+                        <a href="#" className="hover:text-themed-secondary transition-colors">
                             Privacy
                         </a>
-                        <a href="#" className="hover:text-gray-300 transition-colors">
+                        <a href="#" className="hover:text-themed-secondary transition-colors">
                             Terms
                         </a>
-                        <a href="#" className="hover:text-gray-300 transition-colors">
+                        <a href="#" className="hover:text-themed-secondary transition-colors">
                             Contact
                         </a>
                     </div>

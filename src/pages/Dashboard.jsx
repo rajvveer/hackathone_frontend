@@ -65,10 +65,11 @@ const Dashboard = () => {
 
     const pendingTasks = tasks.filter((t) => t.status === 'pending');
     const completedTasks = tasks.filter((t) => t.status === 'completed');
-    const taskProgress =
+    const overallProgress = stats?.overall_progress ?? (
         tasks.length > 0
             ? Math.round((completedTasks.length / tasks.length) * 100)
-            : 0;
+            : 0
+    );
 
     const strengthColors = {
         Strong: 'text-emerald-400',
@@ -90,7 +91,7 @@ const Dashboard = () => {
                 <h1 className="text-2xl md:text-3xl font-bold font-display">
                     Welcome back, {user?.name?.split(' ')[0]}! 👋
                 </h1>
-                <p className="text-gray-400 mt-2">
+                <p className="text-themed-secondary mt-2">
                     Here's your study abroad journey at a glance
                 </p>
             </div>
@@ -117,7 +118,7 @@ const Dashboard = () => {
                 />
                 <StatCard
                     icon="📊"
-                    value={`${taskProgress}%`}
+                    value={`${overallProgress}%`}
                     label="Progress"
                     color="bg-purple-500/10 border-purple-500/30"
                 />
@@ -140,7 +141,7 @@ const Dashboard = () => {
                                         stroke="currentColor"
                                         strokeWidth="10"
                                         fill="none"
-                                        className="text-dark-700"
+                                        style={{ color: 'var(--bg-progress-empty)' }}
                                     />
                                     <circle
                                         cx="64"
@@ -172,9 +173,9 @@ const Dashboard = () => {
                                 Object.entries(profile_strength.details).map(([key, value]) => (
                                     <div
                                         key={key}
-                                        className="flex justify-between items-center py-2 border-b border-white/5 last:border-0"
+                                        className="flex justify-between items-center py-2 border-b last:border-0" style={{ borderColor: 'var(--border-color)' }}
                                     >
-                                        <span className="text-gray-400 capitalize">{key}</span>
+                                        <span className="text-themed-muted capitalize">{key}</span>
                                         <span
                                             className={`font-medium ${strengthColors[value] || 'text-gray-300'
                                                 }`}
@@ -218,7 +219,7 @@ const Dashboard = () => {
                                 <h3 className="text-lg font-semibold">
                                     {current_stage?.name || 'Getting Started'}
                                 </h3>
-                                <p className="text-sm text-gray-400">
+                                <p className="text-sm text-themed-muted">
                                     {current_stage?.description}
                                 </p>
                             </div>
@@ -236,13 +237,14 @@ const Dashboard = () => {
                                     <div
                                         className={`h-2.5 rounded-full transition-all duration-500 ${stage.num <= (user?.stage || 1)
                                             ? 'bg-primary'
-                                            : 'bg-dark-700'
+                                            : ''
                                             }`}
+                                        style={{ backgroundColor: stage.num <= (user?.stage || 1) ? undefined : 'var(--bg-progress-empty)' }}
                                     />
                                     <p
                                         className={`text-xs mt-2 text-center ${stage.num <= (user?.stage || 1)
-                                            ? 'text-gray-300 font-medium'
-                                            : 'text-gray-600'
+                                            ? 'text-themed-secondary font-medium'
+                                            : 'text-themed-muted'
                                             }`}
                                     >
                                         {stage.label}
@@ -267,7 +269,7 @@ const Dashboard = () => {
                                         <h3 className="font-semibold text-lg">
                                             {locked_university.uni_name}
                                         </h3>
-                                        <p className="text-sm text-gray-400">
+                                        <p className="text-sm text-themed-muted">
                                             {locked_university.country}
                                         </p>
                                     </div>
@@ -295,7 +297,7 @@ const Dashboard = () => {
                         </div>
 
                         {tasks.length === 0 ? (
-                            <div className="text-center py-10 text-gray-400">
+                            <div className="text-center py-10 text-themed-muted">
                                 <div className="text-4xl mb-3">📝</div>
                                 <p className="mb-4">
                                     No tasks yet. Chat with AI Counsellor to get started!
@@ -313,7 +315,8 @@ const Dashboard = () => {
                                     <div
                                         key={task.id}
                                         onClick={() => handleTaskToggle(task.id, task.status)}
-                                        className="flex items-center gap-3 p-4 rounded-lg bg-dark-800/50 border border-white/5 hover:bg-dark-800 hover:border-white/10 hover:shadow-md cursor-pointer transition-all duration-200 group"
+                                        className="flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all duration-200 group hover:shadow-md"
+                                        style={{ background: 'var(--bg-card)', borderColor: 'var(--border-color)' }}
                                     >
                                         <div
                                             className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${task.priority === 'high'
@@ -354,7 +357,7 @@ const Dashboard = () => {
                                     <h4 className="font-semibold group-hover:text-primary-light transition-colors">
                                         AI Counsellor
                                     </h4>
-                                    <p className="text-xs text-gray-500">Get personalized advice</p>
+                                    <p className="text-xs text-themed-muted">Get personalized advice</p>
                                 </div>
                             </div>
                         </Link>
@@ -370,7 +373,7 @@ const Dashboard = () => {
                                     <h4 className="font-semibold group-hover:text-primary-light transition-colors">
                                         Universities
                                     </h4>
-                                    <p className="text-xs text-gray-500">Explore options</p>
+                                    <p className="text-xs text-themed-muted">Explore options</p>
                                 </div>
                             </div>
                         </Link>
@@ -389,7 +392,7 @@ const StatCard = ({ icon, value, label, color }) => {
         >
             <div className="text-2xl mb-2">{icon}</div>
             <div className="text-3xl font-bold mb-1">{value}</div>
-            <div className="text-xs text-gray-400 uppercase tracking-wide">
+            <div className="text-xs text-themed-muted uppercase tracking-wide">
                 {label}
             </div>
         </div>
@@ -398,9 +401,9 @@ const StatCard = ({ icon, value, label, color }) => {
 
 // Profile Row Component
 const ProfileRow = ({ label, value }) => (
-    <div className="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
-        <span className="text-gray-500">{label}</span>
-        <span className="text-gray-300 font-medium">{value || 'Not set'}</span>
+    <div className="flex justify-between items-center py-2 border-b last:border-0" style={{ borderColor: 'var(--border-color)' }}>
+        <span className="text-themed-muted">{label}</span>
+        <span className="text-themed-secondary font-medium">{value || 'Not set'}</span>
     </div>
 );
 

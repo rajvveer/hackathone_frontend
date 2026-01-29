@@ -9,6 +9,7 @@ export default {
             colors: {
                 // Custom dark theme colors
                 dark: {
+                    950: '#030712', // Added deep background
                     900: '#0a0f1c',
                     800: '#111827',
                     700: '#1f2937',

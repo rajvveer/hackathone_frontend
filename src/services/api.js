@@ -3,7 +3,7 @@ import axios from 'axios';
 // Create axios instance with base configuration
 const api = axios.create({
     baseURL: '/api',
-    timeout: 10000, // 10 second timeout
+    timeout: 60000, // 60 second timeout for AI operations
     headers: {
         'Content-Type': 'application/json',
     },
@@ -47,8 +47,8 @@ export const authAPI = {
     verifyOtp: (email, otp) =>
         api.post('/auth/verify-otp', { email, otp }),
 
-    resetPassword: (email, newPassword) =>
-        api.post('/auth/reset-password', { email, newPassword }),
+    resetPassword: (email, otp, newPassword) =>
+        api.post('/auth/reset-password', { email, otp, newPassword }),
 };
 
 // ============ USER API ============
@@ -71,6 +71,9 @@ export const chatAPI = {
     // Streaming version using SSE with action support
     sendMessageStream: async (message, conversationId, onChunk, onDone, onError, onAction) => {
         const token = localStorage.getItem('token');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
+
         try {
             const response = await fetch('/api/ai/chat/stream', {
                 method: 'POST',
@@ -78,23 +81,29 @@ export const chatAPI = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ message, conversation_id: conversationId })
+                body: JSON.stringify({ message, conversation_id: conversationId }),
+                signal: controller.signal
             });
 
+            clearTimeout(timeoutId);
+
             if (!response.ok) {
-                throw new Error('Stream request failed');
+                const errorText = await response.text();
+                throw new Error(errorText || 'Stream request failed');
             }
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let conversationIdFromStream = null;
+            let buffer = '';
 
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
 
-                const text = decoder.decode(value, { stream: true });
-                const lines = text.split('\n');
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || ''; // Keep incomplete line in buffer
 
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
@@ -106,21 +115,27 @@ export const chatAPI = {
                             } else if (data.type === 'chunk') {
                                 onChunk(data.content, conversationIdFromStream);
                             } else if (data.type === 'action' && onAction) {
-                                // New: handle action events from AI
                                 onAction(data);
                             } else if (data.type === 'done') {
                                 onDone(data.full_content, conversationIdFromStream, data.actions || []);
+                                return; // Exit successfully
                             } else if (data.type === 'error') {
                                 onError(data.message);
+                                return;
                             }
                         } catch (e) {
-                            // Skip invalid JSON
+                            console.warn('Failed to parse SSE data:', e);
                         }
                     }
                 }
             }
         } catch (err) {
-            onError(err.message);
+            clearTimeout(timeoutId);
+            if (err.name === 'AbortError') {
+                onError('Request timed out. Please try again.');
+            } else {
+                onError(err.message || 'Connection failed');
+            }
         }
     },
 

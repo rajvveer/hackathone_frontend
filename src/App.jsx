@@ -1,7 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from './context/AuthContext';
 import Loader from './components/common/Loader';
 import Navbar from './components/layout/Navbar';
+import Sidebar from './components/layout/Sidebar';
 
 // Pages
 import Landing from './pages/Landing';
@@ -57,14 +59,23 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
-// Layout with Navbar
+// Layout with Navbar and Sidebar
 const MainLayout = ({ children }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
   return (
-    <div className="min-h-screen bg-dark-900">
-      <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {children}
-      </main>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <Navbar onToggleSidebar={toggleSidebar} />
+      <div className="flex">
+        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+        <main className="flex-1 lg:ml-72 p-4 sm:p-6 lg:p-8 min-h-[calc(100vh-64px)] overflow-y-auto">
+          <div className="max-w-7xl mx-auto w-full">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };

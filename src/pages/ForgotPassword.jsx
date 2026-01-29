@@ -63,7 +63,7 @@ const ForgotPassword = () => {
         setLoading(true);
 
         try {
-            await authAPI.resetPassword(email, newPassword);
+            await authAPI.resetPassword(email, otp, newPassword);
             setSuccess('Password reset successfully! Redirecting to login...');
             setTimeout(() => navigate('/login'), 2000);
         } catch (err) {
