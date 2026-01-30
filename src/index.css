@@ -271,6 +271,12 @@
     padding: 0.5rem;
   }
 
+  /* Fix for Windows dropdowns in dark mode */
+  [data-theme="dark"] select.input option {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
   .label {
     @apply block text-sm font-medium mb-2;
     color: var(--text-secondary);

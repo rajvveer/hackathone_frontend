@@ -120,7 +120,7 @@ const Tasks = () => {
                         {tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0}%
                     </span>
                 </div>
-                <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
+                <div className="h-2 bg-themed-secondary rounded-full overflow-hidden">
                     <div
                         className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-500"
                         style={{ width: tasks.length > 0 ? `${(completedCount / tasks.length) * 100}%` : '0%' }}
@@ -182,7 +182,7 @@ const Tasks = () => {
                                         onChange={(e) => setNewTask({ ...newTask, category: e.target.value })}
                                     >
                                         {categories.map(cat => (
-                                            <option key={cat} value={cat} className="bg-dark-800">
+                                            <option key={cat} value={cat}>
                                                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
                                             </option>
                                         ))}
@@ -195,9 +195,9 @@ const Tasks = () => {
                                         value={newTask.priority}
                                         onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
                                     >
-                                        <option value="high" className="bg-dark-800">High</option>
-                                        <option value="medium" className="bg-dark-800">Medium</option>
-                                        <option value="low" className="bg-dark-800">Low</option>
+                                        <option value="high">High</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="low">Low</option>
                                     </select>
                                 </div>
                             </div>
@@ -248,14 +248,14 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
     return (
         <div className={`flex items-center gap-3 p-4 rounded-xl border transition-all group ${isCompleted
             ? 'bg-emerald-500/5 border-emerald-500/20'
-            : 'bg-white/[0.02] border-white/10 hover:border-white/20'
+            : 'bg-themed-card border-themed hover:border-primary/50 shadow-sm hover:shadow-md'
             }`}>
             {/* Checkbox */}
             <button
                 onClick={onToggle}
                 className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all shrink-0 ${isCompleted
                     ? 'bg-emerald-500 border-emerald-500 text-white'
-                    : 'border-white/20 hover:border-primary'
+                    : 'bg-themed border-themed hover:border-primary text-transparent'
                     }`}
             >
                 {isCompleted && (
@@ -269,14 +269,14 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                     <span className="text-lg">{categoryIcons[task.category] || '📌'}</span>
-                    <span className={`font-medium ${isCompleted ? 'line-through text-gray-500' : ''}`}>
+                    <span className={`font-medium ${isCompleted ? 'line-through text-themed-muted' : 'text-themed'}`}>
                         {task.title}
                     </span>
                     {task.ai_generated && (
-                        <span className="badge bg-purple-500/10 text-purple-400 text-xs">AI</span>
+                        <span className="badge bg-purple-500/10 text-purple-500 text-xs shadow-sm border border-purple-500/10">AI</span>
                     )}
                 </div>
-                <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                <div className="flex items-center gap-3 mt-1 text-xs text-themed-muted">
                     <span className="capitalize">{task.category}</span>
                     <span className={priorityStyles[task.priority]}>{task.priority} priority</span>
                 </div>
@@ -285,7 +285,7 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
             {/* Delete Button */}
             <button
                 onClick={onDelete}
-                className="opacity-0 group-hover:opacity-100 p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
                 title="Delete task"
             >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

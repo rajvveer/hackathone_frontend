@@ -11,10 +11,10 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-    // Default to 'light' theme
+    // Default to 'dark' theme
     const [theme, setThemeState] = useState(() => {
         const saved = localStorage.getItem('theme');
-        return saved || 'light';
+        return saved || 'dark';
     });
 
     // Apply theme to HTML element on mount and change
