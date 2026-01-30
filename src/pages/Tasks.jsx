@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { tasksAPI } from '../services/api';
 import Loader from '../components/common/Loader';
+import { fireTaskConfetti, fireMilestoneConfetti } from '../utils/confetti';
+import jsPDF from 'jspdf';
 
 const Tasks = () => {
     const [tasks, setTasks] = useState([]);
@@ -34,6 +36,16 @@ const Tasks = () => {
             } else {
                 await tasksAPI.markComplete(task.id);
                 setTasks(prev => prev.map(t => t.id === task.id ? { ...t, status: 'completed' } : t));
+
+                // Fire confetti for task completion
+                fireTaskConfetti();
+
+                // Check if all tasks are now completed
+                const updatedTasks = tasks.map(t => t.id === task.id ? { ...t, status: 'completed' } : t);
+                const allComplete = updatedTasks.every(t => t.status === 'completed');
+                if (allComplete && updatedTasks.length > 0) {
+                    setTimeout(() => fireMilestoneConfetti(), 500);
+                }
             }
         } catch (err) {
             setError('Failed to update task');
@@ -61,6 +73,65 @@ const Tasks = () => {
         }
     };
 
+    const exportToPDF = () => {
+        const doc = new jsPDF();
+        const margin = 20;
+        let yPos = margin;
+
+        // Title
+        doc.setFontSize(20);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Application Tasks Checklist', margin, yPos);
+        yPos += 15;
+
+        // Stats
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100);
+        doc.text(`${pendingCount} pending • ${completedCount} completed • ${Math.round((completedCount / (tasks.length || 1)) * 100)}% complete`, margin, yPos);
+        yPos += 15;
+
+        // Tasks by category
+        const categories = [...new Set(tasks.map(t => t.category))];
+
+        categories.forEach(category => {
+            const categoryTasks = tasks.filter(t => t.category === category);
+
+            // Category header
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0);
+            doc.text(category.charAt(0).toUpperCase() + category.slice(1), margin, yPos);
+            yPos += 8;
+
+            // Tasks in category
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+
+            categoryTasks.forEach(task => {
+                const checkbox = task.status === 'completed' ? '[✓]' : '[ ]';
+                const priority = task.priority === 'high' ? ' (HIGH)' : '';
+                doc.text(`${checkbox} ${task.title}${priority}`, margin + 5, yPos);
+                yPos += 7;
+
+                // Check for page break
+                if (yPos > 270) {
+                    doc.addPage();
+                    yPos = margin;
+                }
+            });
+
+            yPos += 5;
+        });
+
+        // Footer
+        doc.setFontSize(9);
+        doc.setTextColor(128);
+        doc.text(`Generated with AI Counsellor • ${new Date().toLocaleDateString()}`, margin, doc.internal.pageSize.getHeight() - 10);
+
+        doc.save('Application_Tasks_Checklist.pdf');
+    };
+
     if (loading) return <Loader />;
 
     const filteredTasks = tasks.filter(task => {
@@ -80,14 +151,27 @@ const Tasks = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold font-display">Tasks</h1>
-                    <p className="text-gray-400 mt-1">
+                    <h1 className="text-2xl md:text-3xl font-bold font-display text-themed">Tasks</h1>
+                    <p className="text-themed-secondary mt-1">
                         {pendingCount} pending • {completedCount} completed
                     </p>
                 </div>
-                <button onClick={() => setShowCreate(true)} className="btn btn-primary">
-                    + Add Task
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={exportToPDF}
+                        className="btn border flex items-center gap-2"
+                        style={{ borderColor: 'var(--border-color)' }}
+                        disabled={tasks.length === 0}
+                    >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Export PDF
+                    </button>
+                    <button onClick={() => setShowCreate(true)} className="btn btn-primary">
+                        + Add Task
+                    </button>
+                </div>
             </div>
 
             {error && <div className="alert alert-error">{error}</div>}
@@ -103,9 +187,10 @@ const Tasks = () => {
                         key={id}
                         onClick={() => setFilter(id)}
                         className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${filter === id
-                            ? 'bg-gradient-to-r from-primary to-secondary text-white'
-                            : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                            ? 'bg-primary text-white'
+                            : 'text-themed-secondary hover:bg-themed-secondary/10'
                             }`}
+                        style={{ background: filter === id ? undefined : 'var(--bg-secondary)' }}
                     >
                         {label}
                     </button>
@@ -113,16 +198,19 @@ const Tasks = () => {
             </div>
 
             {/* Progress Bar */}
-            <div className="card">
+            <div
+                className="rounded-2xl p-5"
+                style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+            >
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-400">Overall Progress</span>
-                    <span className="text-sm font-medium">
+                    <span className="text-sm text-themed-secondary">Overall Progress</span>
+                    <span className="text-sm font-medium text-themed">
                         {tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0}%
                     </span>
                 </div>
-                <div className="h-2 bg-themed-secondary rounded-full overflow-hidden">
+                <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--border-color)' }}>
                     <div
-                        className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-500"
+                        className="h-full bg-primary transition-all duration-500"
                         style={{ width: tasks.length > 0 ? `${(completedCount / tasks.length) * 100}%` : '0%' }}
                     />
                 </div>
@@ -130,12 +218,19 @@ const Tasks = () => {
 
             {/* Tasks List */}
             {filteredTasks.length === 0 ? (
-                <div className="card text-center py-12">
-                    <div className="text-5xl mb-4">✅</div>
-                    <h3 className="text-lg font-semibold mb-2">
+                <div
+                    className="rounded-2xl p-12 text-center"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+                >
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                        </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-themed mb-2">
                         {filter === 'completed' ? 'No Completed Tasks' : 'No Tasks Yet'}
                     </h3>
-                    <p className="text-gray-400">
+                    <p className="text-themed-secondary">
                         {filter === 'completed'
                             ? 'Complete some tasks to see them here'
                             : 'Create tasks or chat with AI Counsellor to get started'}
@@ -157,12 +252,15 @@ const Tasks = () => {
             {/* Create Task Modal */}
             {showCreate && (
                 <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-                    <div className="card max-w-md w-full animate-slide-up">
-                        <h3 className="text-xl font-semibold mb-4">Create New Task</h3>
+                    <div
+                        className="rounded-2xl p-6 max-w-md w-full animate-slide-up"
+                        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+                    >
+                        <h3 className="text-xl font-semibold text-themed mb-4">Create New Task</h3>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="label">Task Title</label>
+                                <label className="block text-sm font-medium text-themed-secondary mb-2">Task Title</label>
                                 <input
                                     type="text"
                                     className="input"
@@ -175,7 +273,7 @@ const Tasks = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="label">Category</label>
+                                    <label className="block text-sm font-medium text-themed-secondary mb-2">Category</label>
                                     <select
                                         className="input"
                                         value={newTask.category}
@@ -189,7 +287,7 @@ const Tasks = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="label">Priority</label>
+                                    <label className="block text-sm font-medium text-themed-secondary mb-2">Priority</label>
                                     <select
                                         className="input"
                                         value={newTask.priority}
@@ -206,7 +304,8 @@ const Tasks = () => {
                         <div className="flex gap-3 mt-6">
                             <button
                                 onClick={() => setShowCreate(false)}
-                                className="btn btn-secondary flex-1"
+                                className="btn flex-1 border"
+                                style={{ borderColor: 'var(--border-color)' }}
                             >
                                 Cancel
                             </button>
@@ -230,9 +329,9 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
     const isCompleted = task.status === 'completed';
 
     const priorityStyles = {
-        high: 'text-red-400',
-        medium: 'text-amber-400',
-        low: 'text-emerald-400',
+        high: 'text-red-500',
+        medium: 'text-amber-500',
+        low: 'text-emerald-500',
     };
 
     const categoryIcons = {
@@ -246,17 +345,22 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
     };
 
     return (
-        <div className={`flex items-center gap-3 p-4 rounded-xl border transition-all group ${isCompleted
-            ? 'bg-emerald-500/5 border-emerald-500/20'
-            : 'bg-themed-card border-themed hover:border-primary/50 shadow-sm hover:shadow-md'
-            }`}>
+        <div
+            className={`flex items-center gap-3 p-4 rounded-xl transition-all group ${isCompleted ? 'bg-emerald-500/5' : ''
+                }`}
+            style={{
+                background: isCompleted ? undefined : 'var(--bg-card)',
+                border: `1px solid ${isCompleted ? 'rgba(16, 185, 129, 0.2)' : 'var(--border-color)'}`
+            }}
+        >
             {/* Checkbox */}
             <button
                 onClick={onToggle}
-                className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all shrink-0 ${isCompleted
-                    ? 'bg-emerald-500 border-emerald-500 text-white'
-                    : 'bg-themed border-themed hover:border-primary text-transparent'
+                className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shrink-0 ${isCompleted
+                        ? 'bg-emerald-500 border-emerald-500 text-white'
+                        : 'hover:border-primary'
                     }`}
+                style={{ borderColor: isCompleted ? undefined : 'var(--border-color)' }}
             >
                 {isCompleted && (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -273,7 +377,9 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
                         {task.title}
                     </span>
                     {task.ai_generated && (
-                        <span className="badge bg-purple-500/10 text-purple-500 text-xs shadow-sm border border-purple-500/10">AI</span>
+                        <span className="px-2 py-0.5 text-xs rounded-full bg-purple-500/10 text-purple-500 font-medium">
+                            AI
+                        </span>
                     )}
                 </div>
                 <div className="flex items-center gap-3 mt-1 text-xs text-themed-muted">

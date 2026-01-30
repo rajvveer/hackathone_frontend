@@ -16,7 +16,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { path: '/tasks', label: 'Tasks', icon: '✓' },
     ];
 
-    if (user?.stage === 4) {
+    if (user?.locked_university_id) {
+        navLinks.push({ path: '/sop-helper', label: 'SOP Helper', icon: '✍️' });
         navLinks.push({ path: '/application', label: 'Application', icon: '📝' });
     }
 

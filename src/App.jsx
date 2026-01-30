@@ -18,6 +18,7 @@ import Shortlist from './pages/Shortlist';
 import Tasks from './pages/Tasks';
 import Profile from './pages/Profile';
 import ApplicationGuidance from './pages/ApplicationGuidance';
+import SOPHelper from './pages/SOPHelper';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -187,6 +188,16 @@ function App() {
           <ProtectedRoute>
             <MainLayout>
               <ApplicationGuidance />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sop-helper"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <SOPHelper />
             </MainLayout>
           </ProtectedRoute>
         }

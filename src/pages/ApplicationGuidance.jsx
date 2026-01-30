@@ -82,8 +82,8 @@ const ApplicationGuidance = () => {
         return (
             <div className="max-w-2xl mx-auto text-center py-12">
                 <div className="text-6xl mb-4 animate-bounce">🔒</div>
-                <h1 className="text-2xl font-bold mb-2">Application Guidance Locked</h1>
-                <p className="text-gray-400 mb-6">
+                <h1 className="text-2xl font-bold mb-2 text-themed">Application Guidance Locked</h1>
+                <p className="text-themed-secondary mb-6">
                     You need to lock a university before accessing application guidance.
                     This ensures personalized advice for your specific application.
                 </p>
@@ -118,7 +118,6 @@ const ApplicationGuidance = () => {
             month: 'Month 1-2',
             title: 'Research & Preparation',
             icon: '🔍',
-            color: 'from-blue-500 to-cyan-500',
             tasks: [
                 'Finalize university choice',
                 'Research program requirements',
@@ -130,7 +129,6 @@ const ApplicationGuidance = () => {
             month: 'Month 2-3',
             title: 'Document Preparation',
             icon: '📝',
-            color: 'from-purple-500 to-pink-500',
             tasks: [
                 'Complete SOP drafts',
                 'Request LORs from recommenders',
@@ -142,7 +140,6 @@ const ApplicationGuidance = () => {
             month: 'Month 3-4',
             title: 'Application Submission',
             icon: '🚀',
-            color: 'from-orange-500 to-red-500',
             tasks: [
                 'Fill application forms',
                 'Pay application fees',
@@ -154,7 +151,6 @@ const ApplicationGuidance = () => {
             month: 'Month 4-6',
             title: 'Post-Submission',
             icon: '⏳',
-            color: 'from-emerald-500 to-teal-500',
             tasks: [
                 'Track application status',
                 'Prepare for interviews',
@@ -199,12 +195,12 @@ const ApplicationGuidance = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold font-display">Application Guidance</h1>
-                    <p className="text-gray-400 mt-1">
+                    <h1 className="text-2xl md:text-3xl font-bold font-display text-themed">Application Guidance</h1>
+                    <p className="text-themed-secondary mt-1">
                         Your personalized roadmap to {university.uni_name}
                     </p>
                 </div>
-                <Link to="/tasks" className="btn btn-secondary">
+                <Link to="/tasks" className="btn btn-secondary border" style={{ borderColor: 'var(--border-color)' }}>
                     📋 View All Tasks
                 </Link>
             </div>
@@ -212,28 +208,30 @@ const ApplicationGuidance = () => {
             {error && <div className="alert alert-error">{error}</div>}
 
             {/* Target University Banner */}
-            <div className="card bg-gradient-to-r from-primary/10 via-secondary/5 to-primary/10 border-primary/30 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-2xl"></div>
+            <div
+                className="rounded-2xl p-6 relative overflow-hidden"
+                style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+            >
                 <div className="flex items-center gap-4 relative">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-3xl shadow-lg shadow-primary/20">
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl" style={{ background: 'var(--bg-secondary)' }}>
                         🎯
                     </div>
                     <div className="flex-1">
-                        <p className="text-sm text-primary-light font-medium">Your Target University</p>
-                        <h2 className="text-2xl font-bold">{university.uni_name}</h2>
+                        <p className="text-sm text-themed-secondary font-medium">Your Target University</p>
+                        <h2 className="text-2xl font-bold text-themed">{university.uni_name}</h2>
                         <div className="flex items-center gap-3 mt-1">
-                            <span className="text-gray-400">{university.country}</span>
+                            <span className="text-themed-muted">{university.country}</span>
                             {university.category && (
-                                <span className={`badge ${university.category === 'Dream' ? 'bg-amber-500/20 text-amber-400' :
-                                        university.category === 'Target' ? 'bg-blue-500/20 text-blue-400' :
-                                            'bg-emerald-500/20 text-emerald-400'
+                                <span className={`badge ${university.category === 'Dream' ? 'bg-amber-500/10 text-amber-500' :
+                                    university.category === 'Target' ? 'bg-blue-500/10 text-blue-500' :
+                                        'bg-emerald-500/10 text-emerald-500'
                                     }`}>
                                     {university.category}
                                 </span>
                             )}
                         </div>
                     </div>
-                    <Link to="/shortlist" className="btn btn-ghost text-sm">
+                    <Link to="/shortlist" className="btn btn-ghost text-sm text-themed-secondary">
                         🔓 Change
                     </Link>
                 </div>
@@ -241,34 +239,34 @@ const ApplicationGuidance = () => {
 
             {/* Overall Progress */}
             <div className="grid md:grid-cols-2 gap-4">
-                <div className="card">
+                <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
                     <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-semibold">📋 Task Progress</h3>
+                        <h3 className="font-semibold text-themed">📋 Task Progress</h3>
                         <span className="text-2xl font-bold text-primary">{taskProgress}%</span>
                     </div>
-                    <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-3 rounded-full overflow-hidden" style={{ background: 'var(--bg-secondary)' }}>
                         <div
-                            className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-500"
+                            className="h-full bg-primary rounded-full transition-all duration-500"
                             style={{ width: `${taskProgress}%` }}
                         ></div>
                     </div>
-                    <p className="text-sm text-gray-400 mt-2">
+                    <p className="text-sm text-themed-secondary mt-2">
                         {completedTasks} of {totalTasks} tasks completed
                     </p>
                 </div>
 
-                <div className="card">
+                <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
                     <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-semibold">📁 Documents Ready</h3>
-                        <span className="text-2xl font-bold text-emerald-400">{docProgress}%</span>
+                        <h3 className="font-semibold text-themed">📁 Documents Ready</h3>
+                        <span className="text-2xl font-bold text-emerald-500">{docProgress}%</span>
                     </div>
-                    <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-3 rounded-full overflow-hidden" style={{ background: 'var(--bg-secondary)' }}>
                         <div
-                            className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500"
+                            className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                             style={{ width: `${docProgress}%` }}
                         ></div>
                     </div>
-                    <p className="text-sm text-gray-400 mt-2">
+                    <p className="text-sm text-themed-secondary mt-2">
                         {checkedDocsCount} of {documents.length} documents ready
                     </p>
                 </div>
@@ -276,10 +274,10 @@ const ApplicationGuidance = () => {
 
             {/* Your Tasks (from backend) */}
             {tasks.length > 0 && (
-                <div className="card">
+                <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold">✅ Your Application Tasks</h3>
-                        <span className="badge bg-primary/20 text-primary-light">
+                        <h3 className="text-lg font-semibold text-themed">✅ Your Application Tasks</h3>
+                        <span className="badge bg-primary/10 text-primary">
                             {completedTasks}/{totalTasks} done
                         </span>
                     </div>
@@ -288,7 +286,7 @@ const ApplicationGuidance = () => {
                             <div key={category}>
                                 <div className="flex items-center gap-2 mb-2">
                                     <span className="text-lg">{categoryIcons[category] || '📌'}</span>
-                                    <h4 className="font-medium text-gray-300">{categoryNames[category] || category}</h4>
+                                    <h4 className="font-medium text-themed-secondary">{categoryNames[category] || category}</h4>
                                 </div>
                                 <div className="space-y-2 ml-6">
                                     {categoryTasks.map(task => (
@@ -297,14 +295,17 @@ const ApplicationGuidance = () => {
                                             onClick={() => handleTaskToggle(task.id, task.status)}
                                             className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all
                                                 ${task.status === 'completed'
-                                                    ? 'bg-emerald-500/10 border border-emerald-500/30'
-                                                    : 'bg-white/[0.02] border border-white/10 hover:bg-white/[0.05]'
+                                                    ? 'bg-emerald-500/5 border border-emerald-500/20'
+                                                    : 'hover:bg-themed-secondary/5'
                                                 }`}
+                                            style={{
+                                                border: task.status !== 'completed' ? '1px solid var(--border-color)' : undefined
+                                            }}
                                         >
-                                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all
+                                            <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all
                                                 ${task.status === 'completed'
                                                     ? 'bg-emerald-500 border-emerald-500'
-                                                    : 'border-gray-500 hover:border-primary'
+                                                    : 'border-themed-muted hover:border-primary'
                                                 }`}
                                             >
                                                 {task.status === 'completed' && (
@@ -314,11 +315,11 @@ const ApplicationGuidance = () => {
                                                 )}
                                             </div>
                                             <div className="flex-1">
-                                                <p className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                                                <p className={`font-medium ${task.status === 'completed' ? 'line-through text-themed-muted' : 'text-themed'}`}>
                                                     {task.title}
                                                 </p>
                                                 {task.description && (
-                                                    <p className="text-sm text-gray-500">{task.description}</p>
+                                                    <p className="text-sm text-themed-secondary">{task.description}</p>
                                                 )}
                                             </div>
                                             {task.priority === 'high' && task.status !== 'completed' && (
@@ -334,8 +335,8 @@ const ApplicationGuidance = () => {
             )}
 
             {/* Interactive Timeline */}
-            <div className="card">
-                <h3 className="text-lg font-semibold mb-4">📅 Application Timeline</h3>
+            <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                <h3 className="text-lg font-semibold text-themed mb-4">📅 Application Timeline</h3>
                 <div className="space-y-3">
                     {timeline.map((phase, idx) => (
                         <div
@@ -343,22 +344,25 @@ const ApplicationGuidance = () => {
                             className={`rounded-xl border transition-all duration-300 overflow-hidden
                                 ${expandedPhase === idx
                                     ? 'border-primary/50 bg-primary/5'
-                                    : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.04]'
+                                    : 'hover:bg-themed-secondary/5'
                                 }`}
+                            style={{
+                                borderColor: expandedPhase === idx ? undefined : 'var(--border-color)'
+                            }}
                         >
                             <div
                                 onClick={() => setExpandedPhase(expandedPhase === idx ? -1 : idx)}
                                 className="flex items-center gap-4 p-4 cursor-pointer"
                             >
-                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${phase.color} flex items-center justify-center text-2xl shadow-lg`}>
+                                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style={{ background: 'var(--bg-secondary)' }}>
                                     {phase.icon}
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-primary-light text-sm font-medium">{phase.month}</p>
-                                    <h4 className="font-semibold">{phase.title}</h4>
+                                    <p className="text-primary text-sm font-medium">{phase.month}</p>
+                                    <h4 className="font-semibold text-themed">{phase.title}</h4>
                                 </div>
-                                <div className={`w-8 h-8 rounded-full bg-white/10 flex items-center justify-center transition-transform duration-300 ${expandedPhase === idx ? 'rotate-180' : ''}`}>
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 ${expandedPhase === idx ? 'rotate-180' : ''}`} style={{ background: 'var(--bg-secondary)' }}>
+                                    <svg className="w-5 h-5 text-themed-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
@@ -368,9 +372,9 @@ const ApplicationGuidance = () => {
                                 <div className="px-4 pb-4 pt-0">
                                     <div className="pl-16 space-y-2">
                                         {phase.tasks.map((task, i) => (
-                                            <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-white/[0.03]">
-                                                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary to-secondary"></div>
-                                                <span className="text-gray-300">{task}</span>
+                                            <div key={i} className="flex items-center gap-3 p-2 rounded-lg" style={{ background: 'var(--bg-secondary)' }}>
+                                                <div className="w-2 h-2 rounded-full bg-primary"></div>
+                                                <span className="text-themed-secondary">{task}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -382,10 +386,10 @@ const ApplicationGuidance = () => {
             </div>
 
             {/* Document Checklist */}
-            <div className="card">
+            <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">📁 Document Checklist</h3>
-                    <span className="text-sm text-gray-400">
+                    <h3 className="text-lg font-semibold text-themed">📁 Document Checklist</h3>
+                    <span className="text-sm text-themed-secondary">
                         Click to mark as ready
                     </span>
                 </div>
@@ -396,23 +400,26 @@ const ApplicationGuidance = () => {
                             onClick={() => toggleDocCheck(doc.name)}
                             className={`flex items-center gap-3 p-4 rounded-xl cursor-pointer transition-all
                                 ${checkedDocs[doc.name]
-                                    ? 'bg-emerald-500/10 border border-emerald-500/30'
-                                    : 'bg-white/[0.02] border border-white/10 hover:bg-white/[0.05]'
+                                    ? 'bg-emerald-500/5 border border-emerald-500/20'
+                                    : 'hover:bg-themed-secondary/5'
                                 }`}
+                            style={{
+                                border: checkedDocs[doc.name] ? undefined : '1px solid var(--border-color)'
+                            }}
                         >
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl transition-all
                                 ${checkedDocs[doc.name]
-                                    ? 'bg-emerald-500/20'
-                                    : 'bg-white/10'
+                                    ? 'bg-emerald-500/10'
+                                    : 'bg-themed-secondary/10'
                                 }`}
                             >
                                 {checkedDocs[doc.name] ? '✅' : doc.icon}
                             </div>
                             <div className="flex-1">
-                                <p className={`font-medium ${checkedDocs[doc.name] ? 'text-emerald-400' : ''}`}>
+                                <p className={`font-medium ${checkedDocs[doc.name] ? 'text-emerald-500' : 'text-themed'}`}>
                                     {doc.name}
                                 </p>
-                                <p className="text-sm text-gray-500">{doc.desc}</p>
+                                <p className="text-sm text-themed-secondary">{doc.desc}</p>
                             </div>
                         </div>
                     ))}
@@ -423,55 +430,58 @@ const ApplicationGuidance = () => {
             <div className="grid md:grid-cols-3 gap-4">
                 <Link
                     to="/chat"
-                    className="card bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:border-primary/40 transition-all group"
+                    className="rounded-2xl p-6 transition-all group hover:border-primary/50"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
                 >
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform" style={{ background: 'var(--bg-secondary)' }}>
                             💬
                         </div>
                         <div>
-                            <h4 className="font-semibold">Ask AI Counsellor</h4>
-                            <p className="text-sm text-gray-400">Get help with SOP, interviews</p>
+                            <h4 className="font-semibold text-themed">Ask AI Counsellor</h4>
+                            <p className="text-sm text-themed-secondary">Get help with SOP, interviews</p>
                         </div>
                     </div>
                 </Link>
 
                 <Link
                     to="/tasks"
-                    className="card bg-gradient-to-br from-amber-500/10 to-amber-500/5 border-amber-500/20 hover:border-amber-500/40 transition-all group"
+                    className="rounded-2xl p-6 transition-all group hover:border-amber-500/50"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
                 >
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform" style={{ background: 'var(--bg-secondary)' }}>
                             📝
                         </div>
                         <div>
-                            <h4 className="font-semibold">Manage Tasks</h4>
-                            <p className="text-sm text-gray-400">Track your to-do list</p>
+                            <h4 className="font-semibold text-themed">Manage Tasks</h4>
+                            <p className="text-sm text-themed-secondary">Track your to-do list</p>
                         </div>
                     </div>
                 </Link>
 
                 <Link
                     to="/recommendations"
-                    className="card bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40 transition-all group"
+                    className="rounded-2xl p-6 transition-all group hover:border-emerald-500/50"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
                 >
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform" style={{ background: 'var(--bg-secondary)' }}>
                             🎓
                         </div>
                         <div>
-                            <h4 className="font-semibold">Explore More</h4>
-                            <p className="text-sm text-gray-400">View other universities</p>
+                            <h4 className="font-semibold text-themed">Explore More</h4>
+                            <p className="text-sm text-themed-secondary">View other universities</p>
                         </div>
                     </div>
                 </Link>
             </div>
 
             {/* Motivational Footer */}
-            <div className="card bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5 border-white/10 text-center py-8">
+            <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
                 <div className="text-4xl mb-3">🌟</div>
-                <h3 className="text-xl font-semibold mb-2">You're making great progress!</h3>
-                <p className="text-gray-400 max-w-md mx-auto">
+                <h3 className="text-xl font-semibold text-themed mb-2">You're making great progress!</h3>
+                <p className="text-themed-secondary max-w-md mx-auto">
                     Stay consistent with your preparation. Every task completed brings you closer to {university.uni_name}.
                 </p>
             </div>
