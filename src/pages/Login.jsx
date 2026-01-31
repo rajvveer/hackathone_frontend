@@ -34,14 +34,19 @@ const Login = () => {
 
     return (
         <div className="min-h-screen flex" style={{ background: 'var(--bg-primary)' }}>
-            {/* Left Side - Simple & Clean */}
-            <div className="hidden lg:flex lg:w-1/2 relative" style={{ background: 'var(--bg-secondary)' }}>
+            {/* Left Side - Premium Design */}
+            <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden" style={{ background: 'var(--bg-secondary)' }}>
+                {/* Animated Gradient Orbs */}
+                <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-br from-primary/30 to-secondary/30 rounded-full blur-3xl animate-float" />
+                <div className="absolute bottom-40 right-10 w-96 h-96 bg-gradient-to-br from-secondary/20 to-pink-500/20 rounded-full blur-3xl animate-float-slow" style={{ animationDelay: '-2s' }} />
+                <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-gradient-to-br from-cyan-500/15 to-primary/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '-4s' }} />
+
                 {/* Subtle Pattern */}
                 <div
-                    className="absolute inset-0 opacity-[0.03]"
+                    className="absolute inset-0 opacity-[0.02]"
                     style={{
                         backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
-                        backgroundSize: '32px 32px'
+                        backgroundSize: '40px 40px'
                     }}
                 />
 
@@ -92,10 +97,10 @@ const Login = () => {
             </div>
 
             {/* Right Side - Login Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 relative">
-                {/* Background Effects */}
-                <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-                <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 relative overflow-hidden">
+                {/* Animated Background Effects */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-secondary/5 rounded-full blur-3xl animate-pulse-glow" />
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-secondary/10 to-pink-500/5 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '-1s' }} />
 
                 <div className="w-full max-w-md relative z-10">
                     {/* Mobile Logo */}
@@ -108,13 +113,13 @@ const Login = () => {
                         </Link>
                     </div>
 
-                    {/* Form Card */}
+                    {/* Premium Glass Form Card */}
                     <div
-                        className="rounded-3xl p-8 lg:p-10"
+                        className="rounded-3xl p-8 lg:p-10 backdrop-blur-xl transition-all duration-300 hover:shadow-xl"
                         style={{
-                            background: 'var(--bg-card)',
-                            border: '1px solid var(--border-color)',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1)'
+                            background: 'var(--glass-bg)',
+                            border: '1px solid var(--glass-border)',
+                            boxShadow: 'var(--shadow-elevated)'
                         }}
                     >
                         {/* Header */}

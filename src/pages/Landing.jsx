@@ -163,7 +163,7 @@ const Landing = () => {
                             </div>
                         </div>
                         <div>
-                            <span className="font-display font-bold text-lg">AI Counsellor</span>
+                            <span className="font-display font-bold text-lg">Counselix</span>
                             <span className="hidden sm:block text-xs text-themed-muted">Study Abroad Guide</span>
                         </div>
                     </Link>

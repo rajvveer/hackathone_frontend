@@ -14,6 +14,17 @@ const Recommendations = () => {
     const [addingToShortlist, setAddingToShortlist] = useState({});
     const [shortlistedNames, setShortlistedNames] = useState(new Set());
     const [showOverBudget, setShowOverBudget] = useState(false);
+    const [showFilters, setShowFilters] = useState(false);
+
+    // Filter states
+    const [filters, setFilters] = useState({
+        country: 'all',
+        acceptanceChance: 'all',
+        minFitScore: 0,
+        scholarshipOnly: false,
+        sortBy: 'fit_score',
+        sortOrder: 'desc'
+    });
 
     // Get user's max budget
     const userBudget = user?.profile_data?.budget_range_max || null;
@@ -41,7 +52,7 @@ const Recommendations = () => {
             const shortlists = response.data.shortlists || response.data || [];
             const names = new Set(shortlists.map(s => s.uni_name?.toLowerCase()));
             setShortlistedNames(names);
-        } catch (err) {
+        } catch {
             console.error('Failed to fetch shortlist');
         }
     };
@@ -51,7 +62,7 @@ const Recommendations = () => {
         try {
             await recommendationsAPI.refresh();
             await fetchRecommendations();
-        } catch (err) {
+        } catch {
             setError('Failed to refresh recommendations');
         } finally {
             setRefreshing(false);
@@ -77,7 +88,7 @@ const Recommendations = () => {
             // Mark as shortlisted permanently
             setShortlistedNames(prev => new Set([...prev, uni.name.toLowerCase()]));
             setAddingToShortlist(prev => ({ ...prev, [uni.name]: 'done' }));
-        } catch (err) {
+        } catch {
             setError('Failed to add to shortlist');
             setAddingToShortlist(prev => ({ ...prev, [uni.name]: false }));
         }
@@ -97,6 +108,43 @@ const Recommendations = () => {
         const tuition = parseTuition(uni.tuition_fee);
         return tuition > userBudget;
     };
+
+    // Extract country from location string
+    const extractCountry = (location) => {
+        if (!location) return 'Unknown';
+        const parts = location.split(', ');
+        return parts[parts.length - 1] || location;
+    };
+
+    // Get unique countries from all universities
+    const getUniqueCountries = () => {
+        if (!data) return [];
+        const allUnis = [...(data.dream || []), ...(data.target || []), ...(data.safe || [])];
+        const countries = [...new Set(allUnis.map(u => extractCountry(u.location)))].filter(Boolean);
+        return countries.sort();
+    };
+
+    // Reset all filters
+    const resetFilters = () => {
+        setFilters({
+            country: 'all',
+            acceptanceChance: 'all',
+            minFitScore: 0,
+            scholarshipOnly: false,
+            sortBy: 'fit_score',
+            sortOrder: 'desc'
+        });
+        setShowOverBudget(false);
+    };
+
+    // Count active filters
+    const activeFilterCount = [
+        filters.country !== 'all',
+        filters.acceptanceChance !== 'all',
+        filters.minFitScore > 0,
+        filters.scholarshipOnly,
+        !showOverBudget && userBudget
+    ].filter(Boolean).length;
 
     if (loading) return <Loader />;
 
@@ -124,6 +172,49 @@ const Recommendations = () => {
         if (!showOverBudget && userBudget) {
             unis = unis.filter(uni => !isOverBudget(uni));
         }
+
+        // Apply country filter
+        if (filters.country !== 'all') {
+            unis = unis.filter(uni => extractCountry(uni.location) === filters.country);
+        }
+
+        // Apply acceptance chance filter
+        if (filters.acceptanceChance !== 'all') {
+            unis = unis.filter(uni => uni.acceptance_chance === filters.acceptanceChance);
+        }
+
+        // Apply fit score filter
+        if (filters.minFitScore > 0) {
+            unis = unis.filter(uni => (uni.fit_score || 0) >= filters.minFitScore);
+        }
+
+        // Apply scholarship filter
+        if (filters.scholarshipOnly) {
+            unis = unis.filter(uni => uni.scholarship_available);
+        }
+
+        // Apply sorting
+        unis.sort((a, b) => {
+            let aVal, bVal;
+            switch (filters.sortBy) {
+                case 'fit_score':
+                    aVal = a.fit_score || 0;
+                    bVal = b.fit_score || 0;
+                    break;
+                case 'tuition':
+                    aVal = parseTuition(a.tuition_fee);
+                    bVal = parseTuition(b.tuition_fee);
+                    break;
+                case 'name':
+                    aVal = a.name?.toLowerCase() || '';
+                    bVal = b.name?.toLowerCase() || '';
+                    return filters.sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                default:
+                    aVal = a.fit_score || 0;
+                    bVal = b.fit_score || 0;
+            }
+            return filters.sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
+        });
 
         return unis;
     };
@@ -197,27 +288,184 @@ const Recommendations = () => {
                 </div>
             )}
 
-            {/* Tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-2">
-                {categories.map(({ id, label, icon }) => (
-                    <button
-                        key={id}
-                        onClick={() => setActiveTab(id)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${activeTab === id
-                            ? 'bg-gradient-to-r from-primary to-secondary text-white'
-                            : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
-                            }`}
-                    >
-                        <span>{icon}</span>
-                        <span>{label}</span>
-                        {id !== 'all' && (
-                            <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs">
-                                {(data?.[id] || []).length}
+            {/* Tabs and Filter Toggle */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                {/* Tabs */}
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                    {categories.map(({ id, label, icon }) => (
+                        <button
+                            key={id}
+                            onClick={() => setActiveTab(id)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${activeTab === id
+                                ? 'bg-gradient-to-r from-primary to-secondary text-white'
+                                : 'text-themed-secondary hover:text-themed'
+                                }`}
+                            style={{
+                                background: activeTab === id ? undefined : 'var(--bg-secondary)'
+                            }}
+                        >
+                            <span>{icon}</span>
+                            <span>{label}</span>
+                            {id !== 'all' && (
+                                <span className={`px-2 py-0.5 rounded-full text-xs ${activeTab === id ? 'bg-white/20' : ''}`}
+                                    style={{ background: activeTab === id ? undefined : 'var(--bg-card)' }}>
+                                    {(data?.[id] || []).length}
+                                </span>
+                            )}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Filter Toggle Button */}
+                <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={`btn ${showFilters ? 'btn-primary' : 'btn-secondary'} text-sm flex items-center gap-2`}
+                >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    Filters
+                    {activeFilterCount > 0 && (
+                        <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs">{activeFilterCount}</span>
+                    )}
+                </button>
+            </div>
+
+            {/* Filter Panel */}
+            {showFilters && (
+                <div
+                    className="rounded-2xl p-5 space-y-4 animate-fade-in"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+                >
+                    <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-semibold text-themed flex items-center gap-2">
+                            <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            </svg>
+                            Filter & Sort
+                        </h3>
+                        {activeFilterCount > 0 && (
+                            <button
+                                onClick={resetFilters}
+                                className="text-sm text-primary hover:text-primary-dark transition-colors"
+                            >
+                                Reset All
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {/* Country Filter */}
+                        <div>
+                            <label className="label">Country</label>
+                            <select
+                                value={filters.country}
+                                onChange={(e) => setFilters(f => ({ ...f, country: e.target.value }))}
+                                className="input text-sm"
+                            >
+                                <option value="all">All Countries</option>
+                                {getUniqueCountries().map(country => (
+                                    <option key={country} value={country}>{country}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Acceptance Chance Filter */}
+                        <div>
+                            <label className="label">Acceptance Chance</label>
+                            <select
+                                value={filters.acceptanceChance}
+                                onChange={(e) => setFilters(f => ({ ...f, acceptanceChance: e.target.value }))}
+                                className="input text-sm"
+                            >
+                                <option value="all">Any Chance</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+
+                        {/* Sort By */}
+                        <div>
+                            <label className="label">Sort By</label>
+                            <select
+                                value={filters.sortBy}
+                                onChange={(e) => setFilters(f => ({ ...f, sortBy: e.target.value }))}
+                                className="input text-sm"
+                            >
+                                <option value="fit_score">Fit Score</option>
+                                <option value="tuition">Tuition Fee</option>
+                                <option value="name">Name</option>
+                            </select>
+                        </div>
+
+                        {/* Sort Order */}
+                        <div>
+                            <label className="label">Order</label>
+                            <select
+                                value={filters.sortOrder}
+                                onChange={(e) => setFilters(f => ({ ...f, sortOrder: e.target.value }))}
+                                className="input text-sm"
+                            >
+                                <option value="desc">Highest First</option>
+                                <option value="asc">Lowest First</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Second Row - Sliders and Toggles */}
+                    <div className="flex flex-wrap items-center gap-6 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                        {/* Min Fit Score Slider */}
+                        <div className="flex-1 min-w-[200px]">
+                            <label className="label flex justify-between">
+                                <span>Min Fit Score</span>
+                                <span className="text-primary font-semibold">{filters.minFitScore}/10</span>
+                            </label>
+                            <input
+                                type="range"
+                                min="0"
+                                max="10"
+                                step="1"
+                                value={filters.minFitScore}
+                                onChange={(e) => setFilters(f => ({ ...f, minFitScore: parseInt(e.target.value) }))}
+                                className="w-full h-2 rounded-full appearance-none cursor-pointer"
+                                style={{
+                                    background: `linear-gradient(to right, var(--color-primary) ${filters.minFitScore * 10}%, var(--bg-secondary) ${filters.minFitScore * 10}%)`
+                                }}
+                            />
+                        </div>
+
+                        {/* Scholarship Toggle */}
+                        <label className="flex items-center gap-3 cursor-pointer select-none">
+                            <div className="relative">
+                                <input
+                                    type="checkbox"
+                                    checked={filters.scholarshipOnly}
+                                    onChange={(e) => setFilters(f => ({ ...f, scholarshipOnly: e.target.checked }))}
+                                    className="sr-only"
+                                />
+                                <div className={`w-11 h-6 rounded-full transition-colors ${filters.scholarshipOnly ? 'bg-primary' : ''}`}
+                                    style={{ background: filters.scholarshipOnly ? undefined : 'var(--bg-secondary)' }}>
+                                    <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${filters.scholarshipOnly ? 'translate-x-5' : ''}`} />
+                                </div>
+                            </div>
+                            <span className="text-sm text-themed-secondary">Scholarship Available</span>
+                        </label>
+                    </div>
+
+                    {/* Results Count */}
+                    <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                        <p className="text-sm text-themed-muted">
+                            Showing <span className="font-semibold text-themed">{universities.length}</span> of {getAllUnis().length} universities
+                        </p>
+                        {activeFilterCount > 0 && (
+                            <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                                {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active
                             </span>
                         )}
-                    </button>
-                ))}
-            </div>
+                    </div>
+                </div>
+            )}
 
             {/* University Grid */}
             {universities.length === 0 ? (

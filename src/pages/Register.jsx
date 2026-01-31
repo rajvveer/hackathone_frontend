@@ -164,16 +164,16 @@ const Register = () => {
                         {/* Progress Steps */}
                         <div className="flex items-center justify-center gap-3 mb-8">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step >= 1
-                                    ? 'bg-primary text-white'
-                                    : 'bg-themed-card text-themed-muted border border-themed'
+                                ? 'bg-primary text-white'
+                                : 'bg-themed-card text-themed-muted border border-themed'
                                 }`}>
                                 1
                             </div>
                             <div className={`w-16 h-1 rounded-full transition-all ${step >= 2 ? 'bg-primary' : ''
                                 }`} style={{ background: step >= 2 ? undefined : 'var(--border-color)' }} />
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step >= 2
-                                    ? 'bg-primary text-white'
-                                    : 'bg-themed-card text-themed-muted border border-themed'
+                                ? 'bg-primary text-white'
+                                : 'bg-themed-card text-themed-muted border border-themed'
                                 }`}>
                                 2
                             </div>
@@ -309,7 +309,7 @@ const Register = () => {
                                                     ))}
                                                 </div>
                                                 <p className={`text-xs ${strength.level === 1 ? 'text-red-500' :
-                                                        strength.level === 2 ? 'text-amber-500' : 'text-emerald-500'
+                                                    strength.level === 2 ? 'text-amber-500' : 'text-emerald-500'
                                                     }`}>
                                                     {strength.text} password
                                                 </p>
